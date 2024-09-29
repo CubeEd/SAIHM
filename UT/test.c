@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "sai.h"
+#include "stub_sai.h"
 
 const char* test_profile_get_value(
     _In_ sai_switch_profile_id_t profile_id,
@@ -29,6 +30,10 @@ int main()
     sai_object_id_t           port_list[64];
     sai_object_id_t           lag1_oid;
     sai_object_id_t           lag2_oid;
+    sai_object_id_t           port1_oid;
+    sai_object_id_t           port2_oid;
+    sai_object_id_t           port3_oid;
+    sai_object_id_t           port4_oid;
     sai_object_id_t           lag_mebmer1_oid;
     sai_object_id_t           lag_mebmer2_oid;
     sai_object_id_t           lag_mebmer3_oid;
@@ -52,27 +57,45 @@ int main()
     status = lag_api->create_lag(&lag1_oid, 0, NULL);
     if (status != SAI_STATUS_SUCCESS) 
     {
-        printf("Failed to create a LAG, status=%d\n", status);
+        printf("Failed to create a LAG1, status=%d\n", status);
         return 1;
     }
 
     printf("CREATE LAG: 0x%lX\n", lag1_oid);
 
-    //Create LAG_MEMBER#1
-    status = lag_api->create_lag_member(&lag_mebmer1_oid, 0, NULL);
+    //Create LAG_MEMBER#1 {LAG_ID:LAG#1, PORT_ID:PORT#1}
+    attrs[0].id = SAI_LAG_MEMBER_ATTR_LAG_ID;
+    attrs[0].value.oid = lag1_oid;
+
+    static int32_t port_id = 1;
+    status = stub_create_object(SAI_OBJECT_TYPE_PORT, port_id, &port1_oid);
+
+    attrs[1].id = SAI_LAG_MEMBER_ATTR_PORT_ID;
+    attrs[1].value.oid = port1_oid;
+
+    status = lag_api->create_lag_member(&lag_mebmer1_oid, 2, attrs);
     if (status != SAI_STATUS_SUCCESS) 
     {
-        printf("Failed to create a LAG_MEMBER, status=%d\n", status);
+        printf("Failed to create a LAG_MEMBER1, status=%d\n", status);
         return 1;
     }
 
     printf("CREATE LAG_MEBMER: 0x%lX\n", lag_mebmer1_oid);
 
-    //Create LAG_MEMBER#2
-    status = lag_api->create_lag_member(&lag_mebmer2_oid, 0, NULL);
+    //Create LAG_MEMBER#2 {LAG_ID:LAG#1, PORT_ID:PORT#2}
+    attrs[0].id = SAI_LAG_MEMBER_ATTR_LAG_ID;
+    attrs[0].value.oid = lag1_oid;
+
+    port_id = 2;
+    status = stub_create_object(SAI_OBJECT_TYPE_PORT, port_id, &port2_oid);
+
+    attrs[1].id = SAI_LAG_MEMBER_ATTR_PORT_ID;
+    attrs[1].value.oid = port2_oid;
+
+    status = lag_api->create_lag_member(&lag_mebmer2_oid, 2, attrs);
     if (status != SAI_STATUS_SUCCESS) 
     {
-        printf("Failed to create a LAG_MEMBER, status=%d\n", status);
+        printf("Failed to create a LAG_MEMBER2, status=%d\n", status);
         return 1;
     }
 
@@ -82,27 +105,45 @@ int main()
     status = lag_api->create_lag(&lag2_oid, 0, NULL);
     if (status != SAI_STATUS_SUCCESS) 
     {
-        printf("Failed to create a LAG, status=%d\n", status);
+        printf("Failed to create a LAG2, status=%d\n", status);
         return 1;
     }
 
     printf("CREATE LAG: 0x%lX\n", lag2_oid);
 
-    //Create LAG_MEMBER#3
-    status = lag_api->create_lag_member(&lag_mebmer3_oid, 0, NULL);
+    //Create LAG_MEMBER#3 {LAG_ID:LAG#2, PORT_ID:PORT#3}
+    attrs[0].id = SAI_LAG_MEMBER_ATTR_LAG_ID;
+    attrs[0].value.oid = lag2_oid;
+
+    port_id = 3;
+    status = stub_create_object(SAI_OBJECT_TYPE_PORT, port_id, &port3_oid);
+
+    attrs[1].id = SAI_LAG_MEMBER_ATTR_PORT_ID;
+    attrs[1].value.oid = port3_oid;
+
+    status = lag_api->create_lag_member(&lag_mebmer3_oid, 2, attrs);
     if (status != SAI_STATUS_SUCCESS) 
     {
-        printf("Failed to create a LAG_MEMBER, status=%d\n", status);
+        printf("Failed to create a LAG_MEMBER3, status=%d\n", status);
         return 1;
     }
 
     printf("CREATE LAG_MEBMER: 0x%lX\n", lag_mebmer3_oid);
 
-    //Create LAG_MEMBER#4
-    status = lag_api->create_lag_member(&lag_mebmer4_oid, 0, NULL);
+    //Create LAG_MEMBER#4 {LAG_ID:LAG#2, PORT_ID:PORT#4}
+    attrs[0].id = SAI_LAG_MEMBER_ATTR_LAG_ID;
+    attrs[0].value.oid = lag2_oid;
+
+    port_id = 4;
+    status = stub_create_object(SAI_OBJECT_TYPE_PORT, port_id, &port4_oid);
+
+    attrs[1].id = SAI_LAG_MEMBER_ATTR_PORT_ID;
+    attrs[1].value.oid = port4_oid;
+
+    status = lag_api->create_lag_member(&lag_mebmer4_oid, 2, attrs);
     if (status != SAI_STATUS_SUCCESS) 
     {
-        printf("Failed to create a LAG_MEMBER, status=%d\n", status);
+        printf("Failed to create a LAG_MEMBER4, status=%d\n", status);
         return 1;
     }
 
@@ -149,7 +190,7 @@ int main()
     }
 
     // Remove LAG_MEMBER#2
-    status = lag_api->remove_lag_member(&lag_mebmer2_oid);
+    status = lag_api->remove_lag_member(lag_mebmer2_oid);
     if (status != SAI_STATUS_SUCCESS) 
     {
         printf("Failed to remove_lag_member, LAG_MEBMER 0x%lX, status=%d\n", lag_mebmer2_oid, status);
@@ -168,7 +209,7 @@ int main()
     }
 
     // Remove LAG_MEMBER#3
-    status = lag_api->remove_lag_member(&lag_mebmer3_oid);
+    status = lag_api->remove_lag_member(lag_mebmer3_oid);
     if (status != SAI_STATUS_SUCCESS) 
     {
         printf("Failed to remove_lag_member, LAG_MEBMER 0x%lX, status=%d\n", lag_mebmer3_oid, status);
@@ -187,7 +228,7 @@ int main()
     }
 
     // Remove LAG_MEMBER#1
-    status = lag_api->remove_lag_member(&lag_mebmer1_oid);
+    status = lag_api->remove_lag_member(lag_mebmer1_oid);
     if (status != SAI_STATUS_SUCCESS) 
     {
         printf("Failed to remove_lag_member, LAG_MEBMER 0x%lX, status=%d\n", lag_mebmer1_oid, status);
@@ -195,7 +236,7 @@ int main()
     }
 
     // Remove LAG_MEMBER#4
-    status = lag_api->remove_lag_member(&lag_mebmer4_oid);
+    status = lag_api->remove_lag_member(lag_mebmer4_oid);
     if (status != SAI_STATUS_SUCCESS) 
     {
         printf("Failed to remove_lag_member, LAG_MEBMER 0x%lX, status=%d\n", lag_mebmer4_oid, status);
@@ -203,7 +244,7 @@ int main()
     }
 
     // Remove LAG#2
-    status = lag_api->remove_lag(&lag2_oid);
+    status = lag_api->remove_lag(lag2_oid);
     if (status != SAI_STATUS_SUCCESS) 
     {
         printf("Failed to remove_lag, LAG 0x%lX, status=%d\n", lag2_oid, status);
@@ -211,7 +252,7 @@ int main()
     }
 
     // Remove LAG#1
-    status = lag_api->remove_lag(&lag1_oid);
+    status = lag_api->remove_lag(lag1_oid);
     if (status != SAI_STATUS_SUCCESS) 
     {
         printf("Failed to remove_lag, LAG 0x%lX, status=%d\n", lag1_oid, status);
@@ -221,7 +262,7 @@ int main()
     status = sai_api_uninitialize();
     if (status != SAI_STATUS_SUCCESS) 
     {
-        printf("Failed to sai_api_uninitialize, status=%d\n", lag1_oid, status);
+        printf("Failed to sai_api_uninitialize, status=%d\n", status);
         return 1;
     }
 

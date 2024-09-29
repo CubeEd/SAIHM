@@ -1,6 +1,6 @@
 
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([mlnx_sai], [3.0.0000])
+AC_INIT([mlnx_sai],[3.0.0000])
 AC_CONFIG_SRCDIR([])
 
 dnl use local config dir for extras
@@ -10,7 +10,7 @@ dnl we use auto cheader
 AM_CONFIG_HEADER(config.h)
 
 dnl Defines the Language - we need gcc linker ...
-AC_LANG_C
+AC_LANG([C])
 
 dnl Auto make
 AM_INIT_AUTOMAKE
@@ -27,10 +27,18 @@ AC_PROG_LN_S
 AC_PROG_CC
 
 dnl We will use libtool for making ...
-AC_PROG_LIBTOOL
+LT_INIT
 
 dnl Checks for header files.
-AC_HEADER_STDC
+m4_warn([obsolete],
+[The preprocessor macro `STDC_HEADERS' is obsolete.
+  Except in unusual embedded environments, you can safely include all
+  ISO C90 headers unconditionally.])dnl
+# Autoupdate added the next two lines to ensure that your configure
+# script's behavior did not change.  They are probably safe to remove.
+AC_CHECK_INCLUDES_DEFAULT
+AC_PROG_EGREP
+
 AC_CHECK_HEADERS([sys/types.h stdio.h stdlib.h string.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
@@ -88,4 +96,5 @@ CFLAGS_SAI_INTERFACE_COMMON="-Wall -Wswitch -Wunused -Werror -fPIC -fno-strict-a
 AC_SUBST(CFLAGS_SAI_INTERFACE_COMMON)
 
 dnl Create the following Makefiles
-AC_OUTPUT([Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile])
+AC_OUTPUT

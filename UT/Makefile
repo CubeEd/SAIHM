@@ -13,7 +13,10 @@ SRC = test.c
 OUT = unit_test
 
 # Build target
-all: $(OUT)
+all: sai $(OUT)
+
+sai: 
+	( cd ../stub && ./autogen.sh && ./configure --prefix=/usr && $(MAKE) && $(MAKE) install )
 
 $(OUT): $(SRC)
 	$(CC) -o $(OUT) $(CFLAGS) $(LDFLAGS) $(SRC) $(LIBS)
@@ -21,6 +24,7 @@ $(OUT): $(SRC)
 # Clean target
 clean:
 	rm -f $(OUT)
+	$(MAKE) -C ../stub clean
 
 # Phony targets
 .PHONY: all clean

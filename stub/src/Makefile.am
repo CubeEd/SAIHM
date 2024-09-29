@@ -33,7 +33,7 @@ libsai_la_SOURCES = \
 libsai_la_LIBADD =
 
 libsai_apiincludedir = $(includedir)/sai
-libsai_apiinclude_HEADERS = $(top_srcdir)/../inc/*.h
+libsai_apiinclude_HEADERS = $(top_srcdir)/../inc/*.h $(top_srcdir)/inc/*.h
 
 
 libsai_api_version=$(shell grep LIBVERSION= $(top_srcdir)/sai_interface.ver | sed 's/LIBVERSION=//')
